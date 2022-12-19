@@ -105,9 +105,9 @@ class ScrollableCleanCalendar extends StatefulWidget {
     this.dayRadius = 6,
     required this.calendarController,
   }) : assert(layout != null ||
-            (monthBuilder != null &&
-                weekdayBuilder != null &&
-                dayBuilder != null));
+      (monthBuilder != null &&
+          weekdayBuilder != null &&
+          dayBuilder != null));
 
   @override
   State<ScrollableCleanCalendar> createState() =>
@@ -207,7 +207,7 @@ class _ScrollableCleanCalendarState extends State<ScrollableCleanCalendar> {
                   backgroundColor: widget.dayBackgroundColor,
                   selectedBackgroundColor: widget.daySelectedBackgroundColor,
                   selectedBackgroundColorBetween:
-                      widget.daySelectedBackgroundColorBetween,
+                  widget.daySelectedBackgroundColorBetween,
                   disableBackgroundColor: widget.dayDisableBackgroundColor,
                   dayDisableColor: widget.dayDisableColor,
                   radius: widget.dayRadius,

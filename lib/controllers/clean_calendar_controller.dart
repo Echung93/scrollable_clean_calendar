@@ -1,50 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:scrollable_clean_calendar/utils/extensions.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
+import 'calendar_controller.dart';
+
 class CleanCalendarController extends ChangeNotifier {
-  /// Obrigatory: The mininimum date to show
   final DateTime minDate;
 
-  /// Obrigatory: The maximum date to show
   final DateTime maxDate;
 
-  /// If the range is enabled
   final bool rangeMode;
 
-  /// If the calendar is readOnly
   final bool readOnly;
 
-  /// In what weekday position the calendar is going to start
   final int weekdayStart;
 
-  /// Function when a day is tapped
   final Function(DateTime date)? onDayTapped;
 
-  /// Function when a range is selected
   final Function(DateTime minDate, DateTime? maxDate)? onRangeSelected;
 
-  /// When a date before the min date is tapped
   final Function(DateTime date)? onPreviousMinDateTapped;
 
-  /// When a date after max date is tapped
   final Function(DateTime date)? onAfterMaxDateTapped;
 
-  /// An initial selected date
   final DateTime? initialDateSelected;
 
-  /// The end of selected range
   final DateTime? endDateSelected;
 
-  /// An initial fucus date
   final DateTime? initialFocusDate;
 
   late int weekdayEnd;
   List<DateTime> months = [];
 
-  /// The item scroll controller
   final ItemScrollController itemScrollController = ItemScrollController();
+  final calendarController = Get.put(CalendarController());
 
   CleanCalendarController({
     required this.minDate,
@@ -114,15 +105,22 @@ class CleanCalendarController extends ChangeNotifier {
       if (rangeMinDate == null || rangeMaxDate != null) {
         rangeMinDate = date;
         rangeMaxDate = null;
+        calendarController.firstDay(DateFormat('yyyy-MM-dd').format(date).toString());
+        calendarController.secondDay("");
       } else if (date.isBefore(rangeMinDate!)) {
         rangeMaxDate = rangeMinDate;
         rangeMinDate = date;
+        calendarController.firstDay(DateFormat('yyyy-MM-dd').format(rangeMinDate!).toString());
+        calendarController.secondDay(DateFormat('yyyy-MM-dd').format(rangeMaxDate!).toString());
       } else if (date.isAfter(rangeMinDate!) || date.isSameDay(rangeMinDate!)) {
         rangeMaxDate = date;
+        calendarController.secondDay(DateFormat('yyyy-MM-dd').format(date).toString());
       }
     } else {
       rangeMinDate = date;
       rangeMaxDate = date;
+      calendarController.firstDay(DateFormat('yyyy-MM-dd').format(date).toString());
+      calendarController.secondDay(DateFormat('yyyy-MM-dd').format(date).toString());
     }
 
     if (update) {

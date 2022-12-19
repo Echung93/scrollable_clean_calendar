@@ -52,13 +52,13 @@ class WeekdaysWidget extends StatelessWidget {
         weekday.capitalize(),
         style: textStyle ??
             Theme.of(context).textTheme.bodyText1!.copyWith(
-                  color: Theme.of(context)
-                      .textTheme
-                      .bodyText1!
-                      .color!
-                      .withOpacity(.4),
-                  fontWeight: FontWeight.bold,
-                ),
+              color: Theme.of(context)
+                  .textTheme
+                  .bodyText1!
+                  .color!
+                  .withOpacity(.4),
+              fontWeight: FontWeight.bold,
+            ),
       ),
     );
   }
@@ -69,14 +69,24 @@ class WeekdaysWidget extends StatelessWidget {
         weekday.capitalize(),
         style: textStyle ??
             Theme.of(context).textTheme.bodyText1!.copyWith(
-                  color: Theme.of(context)
-                      .textTheme
-                      .bodyText1!
-                      .color!
-                      .withOpacity(.4),
-                  fontWeight: FontWeight.bold,
-                ),
+              color: getDayColor(weekday),
+              fontWeight: FontWeight.bold,
+            ),
       ),
     );
+  }
+
+  Color getDayColor(String weekday) {
+    Color color = Colors.grey;
+
+    if(weekday == "일" || weekday == "Sun") {
+      color = Colors.red;
+    }
+
+    else if(weekday == "토" || weekday == "Sat"){
+      color = Colors.blue;
+    }
+
+    return color;
   }
 }
