@@ -92,7 +92,7 @@ class DaysWidget extends StatelessWidget {
           }
         }
 
-        if (plan!.isNotEmpty) {
+        if (plan != null) {
           if (DateTime.now().isSameDayOrBefore(day)) {
             for (int i = 0; i < plan!.length; i++) {
               String? start = plan![i].planStartDate;
