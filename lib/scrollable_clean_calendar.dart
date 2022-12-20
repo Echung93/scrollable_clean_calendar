@@ -88,7 +88,7 @@ class ScrollableCleanCalendar extends StatefulWidget {
     this.showWeekdays = true,
     this.layout,
     this.calendarCrossAxisSpacing = 4,
-    this.calendarMainAxisSpacing = 4,
+    this.calendarMainAxisSpacing = 10,
     this.spaceBetweenCalendars = 24,
     this.spaceBetweenMonthAndCalendar = 24,
     this.padding,
