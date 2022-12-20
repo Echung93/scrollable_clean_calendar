@@ -38,6 +38,8 @@ class CleanCalendarController extends ChangeNotifier {
   final ItemScrollController itemScrollController = ItemScrollController();
   final calendarController = Get.put(CalendarController());
 
+  final int? offScheduleDay;
+
   CleanCalendarController({
     required this.minDate,
     required this.maxDate,
@@ -51,6 +53,7 @@ class CleanCalendarController extends ChangeNotifier {
     this.onPreviousMinDateTapped,
     this.weekdayStart = DateTime.monday,
     this.initialFocusDate,
+    this.offScheduleDay
   })  : assert(weekdayStart <= DateTime.sunday),
         assert(weekdayStart >= DateTime.monday) {
     final x = weekdayStart - 1;
@@ -102,7 +105,15 @@ class CleanCalendarController extends ChangeNotifier {
   }
 
   void onDayClick(DateTime date, {bool update = true}) {
-    if (rangeMode) {
+
+    if(offScheduleDay != null) {
+      rangeMinDate = date;
+      rangeMaxDate = date.add(Duration(days: offScheduleDay!));
+      calendarController.firstDay(DateFormat('yyyy-MM-dd').format(rangeMinDate!).toString());
+      calendarController.secondDay(DateFormat('yyyy-MM-dd').format(rangeMaxDate!).toString());
+    }
+
+    else if (rangeMode) {
       if (rangeMinDate == null || rangeMaxDate != null) {
         rangeMinDate = date;
         rangeMaxDate = null;
