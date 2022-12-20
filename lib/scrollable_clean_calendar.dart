@@ -80,6 +80,8 @@ class ScrollableCleanCalendar extends StatefulWidget {
   /// The controller of ScrollableCleanCalendar
   final CleanCalendarController calendarController;
 
+  final List<dynamic>? plan;
+
   const ScrollableCleanCalendar({
     this.locale = 'en',
     this.scrollController,
@@ -103,6 +105,7 @@ class ScrollableCleanCalendar extends StatefulWidget {
     this.dayDisableColor,
     this.dayTextStyle,
     this.dayRadius = 6,
+    this.plan,
     required this.calendarController,
   }) : assert(layout != null ||
       (monthBuilder != null &&
@@ -212,6 +215,7 @@ class _ScrollableCleanCalendarState extends State<ScrollableCleanCalendar> {
                   dayDisableColor: widget.dayDisableColor,
                   radius: widget.dayRadius,
                   textStyle: widget.dayTextStyle,
+                  plan: widget.plan,
                 );
               },
             )

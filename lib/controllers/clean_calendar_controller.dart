@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:scrollable_clean_calendar/utils/extensions.dart';
@@ -134,11 +135,23 @@ class CleanCalendarController extends ChangeNotifier {
         onRangeSelected!(rangeMinDate!, rangeMaxDate);
       }
     }
+
+    if (rangeMinDate != null && rangeMaxDate != null) {
+      int difference = int.parse(
+          rangeMaxDate!.difference(rangeMinDate!).inDays.toString());
+
+      if(difference > 30) {
+        Fluttertoast.showToast(msg: "maximum_thirty".tr);
+        clearSelectedDates();
+      }
+    }
   }
 
   void clearSelectedDates() {
     rangeMaxDate = null;
     rangeMinDate = null;
+    calendarController.firstDay("");
+    calendarController.secondDay("");
 
     notifyListeners();
   }

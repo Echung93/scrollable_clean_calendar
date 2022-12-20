@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:scrollable_clean_calendar/controllers/clean_calendar_controller.dart';
 import 'package:scrollable_clean_calendar/models/day_values_model.dart';
 import 'package:scrollable_clean_calendar/utils/enums.dart';
@@ -21,6 +22,7 @@ class DaysWidget extends StatelessWidget {
   final Color? dayDisableColor;
   final double radius;
   final TextStyle? textStyle;
+  final List<dynamic>? plan;
 
   const DaysWidget({
     Key? key,
@@ -37,6 +39,7 @@ class DaysWidget extends StatelessWidget {
     required this.dayDisableColor,
     required this.radius,
     required this.textStyle,
+    this.plan,
   }) : super(key: key);
 
   @override
@@ -75,6 +78,7 @@ class DaysWidget extends StatelessWidget {
         final text = (index + 1 - start).toString();
 
         bool isSelected = false;
+        bool anotherDay = false;
 
         if (cleanCalendarController.rangeMinDate != null) {
           if (cleanCalendarController.rangeMinDate != null &&
@@ -85,6 +89,22 @@ class DaysWidget extends StatelessWidget {
           } else {
             isSelected =
                 day.isAtSameMomentAs(cleanCalendarController.rangeMinDate!);
+          }
+        }
+
+        if (plan!.isNotEmpty) {
+          if (DateTime.now().isSameDayOrBefore(day)) {
+            for (int i = 0; i < plan!.length; i++) {
+              String? start = plan![i].planStartDate;
+              String? end = plan![i].planEndDate;
+
+              anotherDay = day.isSameDayOrAfter(DateTime.parse(start!)) &&
+                  day.isSameDayOrBefore(DateTime.parse(end!));
+
+              if (anotherDay) {
+                break;
+              }
+            }
           }
         }
 
@@ -107,7 +127,7 @@ class DaysWidget extends StatelessWidget {
         } else {
           widget = <Layout, Widget Function()>{
             Layout.DEFAULT: () => _pattern(context, dayValues),
-            Layout.BEAUTY: () => _beauty(context, dayValues),
+            Layout.BEAUTY: () => _beauty(context, dayValues, anotherDay),
           }[layout]!();
         }
 
@@ -211,23 +231,38 @@ class DaysWidget extends StatelessWidget {
     );
   }
 
-  Widget _beauty(BuildContext context, DayValues values) {
+  Widget _beauty(BuildContext context, DayValues values, bool anotherDay) {
     BorderRadiusGeometry? borderRadius;
     Color bgColor = Colors.transparent;
+    bool optionText = false;
+
     TextStyle txtStyle =
     (textStyle ?? Theme.of(context).textTheme.bodyText1)!.copyWith(
-      color: getDayColor(values.day.weekday)
-      // backgroundColor != null
-      //     ? backgroundColor!.computeLuminance() > .5
-      //     ? Colors.black
-      //     : Colors.white
-      //     : Theme.of(context).colorScheme.onSurface
-      ,
+      color: getDayColor(values.day.weekday),
       fontWeight: values.isFirstDayOfWeek || values.isLastDayOfWeek
           ? FontWeight.bold
           : null,
     );
     borderRadius = BorderRadius.all(Radius.circular(radius));
+
+    if(anotherDay) {
+      bgColor = selectedBackgroundColorBetween ?? const Color(0xffaaaaaa);
+      txtStyle =
+          (textStyle ?? Theme.of(context).textTheme.bodyText1)!.copyWith(
+            color:
+            selectedBackgroundColor ?? Colors.white,
+            fontWeight: values.isFirstDayOfWeek || values.isLastDayOfWeek
+                ? FontWeight.bold
+                : null,
+          );
+
+      for(int i = 0; i < plan!.length; i++) {
+        optionText = values.day.isSameDay(DateTime.parse(plan![i].planStartDate!));
+        if(optionText) {
+          break;
+        }
+      }
+    }
 
     if (values.isSelected) {
       if (values.isFirstDayOfWeek) {
@@ -257,7 +292,7 @@ class DaysWidget extends StatelessWidget {
             values.day.isSameDay(values.selectedMaxDate!)) {
         }
       } else {
-        bgColor = selectedBackgroundColorBetween ?? Color(0xff5c5b75);
+        bgColor = selectedBackgroundColorBetween ?? const Color(0xff5c5b75);
         txtStyle =
             (textStyle ?? Theme.of(context).textTheme.bodyText1)!.copyWith(
               color:
@@ -281,16 +316,36 @@ class DaysWidget extends StatelessWidget {
     }
 
     return Container(
-      margin: const EdgeInsets.all(10),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: borderRadius,
-      ),
-      child: Text(
-        values.text,
-        textAlign: TextAlign.center,
-        style: txtStyle,
+      margin: const EdgeInsets.all(9),
+      child: Wrap(
+        children: [
+          Column(
+            children: [
+              Wrap(
+                children: [
+                  Container(
+                    height: 33,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: bgColor,
+                      borderRadius: borderRadius,
+                    ),
+                    child:Text(
+                      values.text,
+                      textAlign: TextAlign.center,
+                      style: txtStyle,
+                    ),
+                  ),
+                ],
+              ),
+              optionText ? Wrap(
+                children: [
+                  Text("other_schedule".tr, style: const TextStyle(fontSize: 10,), textAlign: TextAlign.center,),
+                ],
+              ) : Container(),
+            ],
+          ),
+        ],
       ),
     );
   }
